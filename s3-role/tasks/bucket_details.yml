@@ -1,0 +1,94 @@
+- aws_s3_bucket_facts:
+  register: s3_buckets
+
+#- debug: var=s3_buckets
+
+- name: Iterate buckets
+  set_fact:
+    app_item: "{{ item.name }}"
+  with_items: "{{ s3_buckets.ansible_facts.buckets }}"
+  register: app_result
+
+
+- name: Create Fact List
+  set_fact:
+    s3_bucketlist: "{{ app_result.results | map(attribute='item.name') | list }}"
+
+#- debug: var=s3_bucketlist
+
+- name: List S3 Buckets
+  local_action:
+    module: aws_s3
+    bucket: "{{ item }}"
+    mode: list
+  with_items:
+    - "{{ s3_bucketlist }}"
+  register: s3_list_I
+
+- name: Execute the commandfor list of files in s3 bucket
+  shell: "aws s3 ls --summarize --human-readable --recursive s3://{{item}} | grep 'Total Objects'"
+  with_items:
+    - "{{ s3_bucketlist }}"
+  register: s3ObjectsList
+
+- name: Iterate Objects list
+  set_fact:
+    app_item: "{{ item.stdout_lines }}"
+  with_items: "{{ s3ObjectsList.results }}"
+  register: obj_result
+
+- debug: var=obj_result
+
+- name: Create Fact List result
+  set_fact:
+    s3_FilesList: "{{ obj_result.results | map(attribute='item.stdout_lines') | list }}"
+
+- name: list out the number of files in s3 buckets
+  debug: 
+    var: s3_FilesList
+
+- name: Execute Command for aws bucket size return
+  shell: "aws s3 ls --summarize --human-readable --recursive s3://{{item}} | grep 'Total Size'"
+  with_items:
+    - "{{ s3_bucketlist }}"
+  register: s3ObjectsSize
+
+- name: Iterate Objects size
+  set_fact:
+    app_item: "{{ item.stdout_lines }}"
+  with_items: "{{ s3ObjectsSize.results }}"
+  register: objsize_result
+
+- debug: var=objsize_result
+
+- name: Create Fact size result
+  set_fact:
+    s3_FilesSize: "{{ objsize_result.results | map(attribute='item.stdout_lines') | list }}"
+
+- name: list out the size of bucket in s3 buckets
+  debug:
+    var: s3_FilesSize
+
+
+- name: Execute Command for most recent edited file
+  shell: " aws s3 ls s3://{{item}} --recursive | sort | tail -n 1 | awk '{print $4}'"
+  with_items:
+    - "{{ s3_bucketlist }}"
+  register: s3_MRFile
+
+- name: Iterate most recent files
+  set_fact:
+    app_item: "{{ item.stdout_lines }}"
+  with_items: "{{ s3_MRFile.results }}"
+  register: MRFile_result
+
+- debug: var=MRFile_result
+
+- name: Create most recent edit file results
+  set_fact:
+    MRFile_out: "{{ MRFile_result.results | map(attribute='item.stdout_lines') | list }}"
+
+- name: list out the most recent edited files in s3 buckets
+  debug:
+    var: MRFile_out
+

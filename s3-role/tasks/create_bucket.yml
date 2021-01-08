@@ -1,0 +1,17 @@
+- include_vars: files.yml
+- name: Create an empty bucket
+  aws_s3:
+    bucket: "{{ item }}"
+    mode: delete
+    permission: private
+  with_items:
+    - "{{ bucketlist }}"
+  register: s3_buckets
+
+- debug: var=s3_buckets
+
+- name: filter bucket details
+  set_fact:
+    app_item: "{{ item }}"
+  with_items: "{{ s3_buckets.results }}"
+  register: s3_facts
