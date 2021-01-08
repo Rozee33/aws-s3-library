@@ -10,9 +10,13 @@ This is a simple ansible role to perform the below tasks
 * This role will create buckets in aws S3. This has capability to create multiple bucket at a single shot using an input variable file with the list of buckets named
 * This role will help us to list out the details of AWS S3 buckets as follows
   * Number of files in individual buckets in AWS S3
+![bucket_details_files](https://user-images.githubusercontent.com/20129204/104019990-7efe8400-51e2-11eb-9914-65a39bc6b5ee.JPG)
   * Bucket creation data along with time
+![bucket_details_1](https://user-images.githubusercontent.com/20129204/104020003-82920b00-51e2-11eb-8d25-67a2b97c5821.JPG)
   * Size of the S3 Buckets
+![bucket_details_files_sizes](https://user-images.githubusercontent.com/20129204/104019999-8160de00-51e2-11eb-9910-cfb5de9a165f.JPG)
   * Last modifed files in list
+![bucket_details_files_latest](https://user-images.githubusercontent.com/20129204/104019997-80c84780-51e2-11eb-9d6b-47da40f3da74.JPG)
 <a name="Prerequisite"></a>
 ## 2. Prerequisite
 This is developed over ansible which is a very light weight tool for configuration management. It need some of basic pre-requisite
@@ -38,15 +42,13 @@ Once the pre-requisite are done, we are ready to get started with the execution.
   * AWS_DEFAULT_REGION
   You can update this using the this aws [help](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-your-credentials.html) 
 * Once updated, you can go ahead with the execution
-  * Item 3a
-  * Item 3b
-  * Item 3c
 
 <a name="Howtoexecute"></a>
 ## 4. How to execute
 Execution of this project is designed in very simple way. We have 2 ways for execution,
 * Create bucket in S3
   * ansible-playbook test.yml -e "create_bucket=true"  - This command will execute the create bucket logic for creating buckets in S3
+![create_bucket_out](https://user-images.githubusercontent.com/20129204/104020001-81f97480-51e2-11eb-93b4-9924c3eecbef.JPG)
 * Get the details of buckets in S3
   * ansible-playbook test.yml -e "bucket_details=true" - This command fetched all details mentioned in [section-1](#Whatisthisprojectfor)
   
@@ -56,3 +58,6 @@ This is an initial kick start for AWS S3 utilities using ansible. Will be updati
 * Cleaning filtering of output for bucket size, number of files etc.,
 * Create bucket and fetch details of bucket in a single playbook.
 * custom modules for aws s3 utilities using python will be added as support
+
+## Happy for Support ## 
+Feel free to fork the code and modify it.
